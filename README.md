@@ -1,8 +1,23 @@
-# Udacity Data Scientist Nanodegree Capstone Project
+# Udacity Data Scientist Nanodegree Starbucks Capstone Project
 
-This repository has all the code and report for my Udacity Data Scientist Nanodegree Capstone project
+## Table of Contents
+1. [Project Motivation](#ProjectMotivation)
+2. [Installation](#Installation)
+3. [File Descriptions](#File)
+4. [Results](#Results)
 
-## Starbucks-Capstone-Project
 
-This data set contains simulated data that mimics customer behavior on the Starbucks rewards mobile app. Once every few days, Starbucks sends out an offer to users of the mobile app. An offer can be merely an advertisement for a drink or an actual offer such as a discount or BOGO (buy one get one free). Some users might not receive any offer during certain weeks.
+## Project Motivation <a name="ProjectMotivation"></a>
+
+
+
+### Installation <a name="Installation"></a>
+
+
+### File Descriptions <a name="File"></a>
+
+
+### Results <a name="Results"></a>
+
+
 
