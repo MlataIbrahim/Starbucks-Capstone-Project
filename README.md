@@ -15,9 +15,9 @@ Some users might not receive any offer during certain weeks.Not all users receiv
 This data set is a simplified version of the real Starbucks app because the underlying simulator only has one product
 whereas Starbucks actually sells dozens of products.
 - The problem statement I am aiming to answer are :
-**(1)** Discover customer attributes as Age , income, gender.
-**(2)** Discover How long did the users become our members ? .
-**(3)** predict whether or not the offer will respond by the person.
+  **(1)** Discover customer attributes as Age , income, gender.
+  **(2)** Discover How long did the users become our members ? .
+  **(3)** predict whether or not the offer will respond by the person.
 Using the data provided (portfolio, profile, Transactional),I answer first and second question using charts
 and i answer the third question using 6 classification models.
 
