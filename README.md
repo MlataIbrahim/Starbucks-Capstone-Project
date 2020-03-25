@@ -48,7 +48,7 @@ Actually, most metrics are great and I like to evaluate many metrics but from ou
 My analysis suggests that the resulting GaussianNB model has an bogo training data accuracy of 64 and bogo test accuracy of 62 .
 discount training accuracy of 0.929 and discount test accuracy of 60 suggests that the GaussianNB model I constructed did not overfit the training data.
 
-Blog Post : https://medium.com/@mlataibrahim/analyzing-customer-behavior-on-the-starbucks-rewards-mobile-app-95c60a3217c5?sk=6c4569a8b279de1d6889a1684f263e6a
+The Blog Post can be found [Here](https://medium.com/@mlataibrahim/analyzing-customer-behavior-on-the-starbucks-rewards-mobile-app-95c60a3217c5?sk=6c4569a8b279de1d6889a1684f263e6a)
 
 ## Licensing and Acknowledgements <a name="Licensing"></a>
 
