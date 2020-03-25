@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>Starbucks_Capstone</title>
+<title>Starbucks_Capstone_notebook</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13203,7 +13203,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[208]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#import libraries </span>
@@ -13218,6 +13218,8 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 
+<span class="kn">import</span> <span class="nn">hyperopt</span>
+<span class="kn">from</span> <span class="nn">sklearn.grid_search</span> <span class="k">import</span> <span class="n">GridSearchCV</span>
 <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">KNeighborsClassifier</span>
 <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
 <span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="k">import</span> <span class="n">DecisionTreeClassifier</span>
@@ -13234,10 +13236,31 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/opt/conda/lib/python3.6/site-packages/sklearn/cross_validation.py:41: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. Also note that the interface of the new CV iterators are different from that of this module. This module will be removed in 0.20.
+  &#34;This module will be removed in 0.20.&#34;, DeprecationWarning)
+/opt/conda/lib/python3.6/site-packages/sklearn/grid_search.py:42: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. This module will be removed in 0.20.
+  DeprecationWarning)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[97]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># loding data</span>
@@ -13254,16 +13277,18 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Data-Cleaning">Data Cleaning<a class="anchor-link" href="#Data-Cleaning">&#182;</a></h1><h3 id="1----Portfolio-dataset">1 -  Portfolio dataset<a class="anchor-link" href="#1----Portfolio-dataset">&#182;</a></h3>
+<h1 id="Data-Cleaning">Data Cleaning<a class="anchor-link" href="#Data-Cleaning">&#182;</a></h1><p>Before we can do exploratory data analysis there are some data cleaning steps we need to do.
+I created functions to handle the three datasets ( portfolio,profile and transcript)</p>
+<h3 id="1----Portfolio-dataset">1 -  Portfolio dataset<a class="anchor-link" href="#1----Portfolio-dataset">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[98]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># size </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Portfolio dataset before cleaning </span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;portfolio size  : </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">portfolio</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 <span class="n">portfolio</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -13289,7 +13314,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[98]:</div>
+    <div class="prompt output_prompt">Out[3]:</div>
 
 
 
@@ -13379,10 +13404,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[99]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">clean_portfolio</span><span class="p">(</span><span class="n">portfolio</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Portfolio cleaning function </span>
+<span class="k">def</span> <span class="nf">clean_portfolio</span><span class="p">(</span><span class="n">portfolio</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Cleaning the portfolio dataset</span>
 <span class="sd">    INPUT:</span>
@@ -13421,10 +13447,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[100]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cleaned_portfolio</span> <span class="o">=</span> <span class="n">clean_portfolio</span><span class="p">(</span><span class="n">portfolio</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Portfolio dataset after cleaning</span>
+<span class="n">cleaned_portfolio</span> <span class="o">=</span> <span class="n">clean_portfolio</span><span class="p">(</span><span class="n">portfolio</span><span class="p">)</span>
 <span class="n">cleaned_portfolio</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -13438,7 +13465,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[100]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -13565,10 +13592,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[101]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># size </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># # Profile dataset before cleaning</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;profile size  : </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 <span class="n">profile</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -13594,7 +13621,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[101]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
@@ -13678,10 +13705,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[102]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">clean_profile</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Profile cleaning function </span>
+<span class="k">def</span> <span class="nf">clean_profile</span><span class="p">(</span><span class="n">profile</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    data cleaning the profile dataframe</span>
 <span class="sd">    </span>
@@ -13717,11 +13745,12 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[103]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cleaned_profile</span> <span class="o">=</span> <span class="n">clean_profile</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
-<span class="n">cleaned_profile</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Profile dataset after cleaning</span>
+<span class="n">cleaned_profile</span> <span class="o">=</span> <span class="n">clean_profile</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+<span class="n">cleaned_profile</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13734,7 +13763,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[103]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -13758,58 +13787,58 @@ div#notebook {
     <tr style="text-align: right;">
       <th></th>
       <th>age</th>
-      <th>became_member_on</th>
-      <th>gender</th>
-      <th>id</th>
       <th>income</th>
       <th>days</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>1</th>
-      <td>55.0</td>
-      <td>2017-07-15</td>
-      <td>F</td>
-      <td>0610b486422d4921ae7d2bf64640c50b</td>
-      <td>112000.0</td>
-      <td>982</td>
+      <th>count</th>
+      <td>14825.000000</td>
+      <td>14825.000000</td>
+      <td>14825.000000</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>75.0</td>
-      <td>2017-05-09</td>
-      <td>F</td>
-      <td>78afa995795e4d85b5d9ceeca43f5fef</td>
-      <td>100000.0</td>
-      <td>1049</td>
+      <th>mean</th>
+      <td>54.393524</td>
+      <td>65404.991568</td>
+      <td>1130.478988</td>
     </tr>
     <tr>
-      <th>5</th>
-      <td>68.0</td>
-      <td>2018-04-26</td>
-      <td>M</td>
-      <td>e2127556f4f64592b11af22de27a7932</td>
-      <td>70000.0</td>
-      <td>697</td>
+      <th>std</th>
+      <td>17.383705</td>
+      <td>21598.299410</td>
+      <td>419.205158</td>
     </tr>
     <tr>
-      <th>8</th>
-      <td>65.0</td>
-      <td>2018-02-09</td>
-      <td>M</td>
-      <td>389bc3fa690240e798340f5a15918d5c</td>
-      <td>53000.0</td>
-      <td>773</td>
+      <th>min</th>
+      <td>18.000000</td>
+      <td>30000.000000</td>
+      <td>608.000000</td>
     </tr>
     <tr>
-      <th>12</th>
-      <td>58.0</td>
-      <td>2017-11-11</td>
-      <td>M</td>
-      <td>2eeac8d8feae4a8cad5a6af0499a211d</td>
-      <td>51000.0</td>
-      <td>863</td>
+      <th>25%</th>
+      <td>42.000000</td>
+      <td>49000.000000</td>
+      <td>816.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>55.000000</td>
+      <td>64000.000000</td>
+      <td>966.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>66.000000</td>
+      <td>80000.000000</td>
+      <td>1405.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>101.000000</td>
+      <td>120000.000000</td>
+      <td>2431.000000</td>
     </tr>
   </tbody>
 </table>
@@ -13831,10 +13860,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[104]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># size </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transcript dataset before cleaning </span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;transcript size  : </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">transcript</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 <span class="n">transcript</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -13860,7 +13889,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[104]:</div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
@@ -13938,10 +13967,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[105]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">clean_transcript</span><span class="p">(</span><span class="n">transcript</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transcript cleaning function </span>
+<span class="k">def</span> <span class="nf">clean_transcript</span><span class="p">(</span><span class="n">transcript</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    data cleaning the transcript dataframe, return usable dataframe need contain offer events</span>
 <span class="sd">    </span>
@@ -13952,6 +13982,7 @@ div#notebook {
 <span class="sd">    offer - the cleaned offer dataframe</span>
 <span class="sd">    </span>
 <span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># create new dataframes from filters </span>
     <span class="n">trans</span> <span class="o">=</span> <span class="n">transcript</span><span class="p">[</span><span class="n">transcript</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;transaction&#39;</span><span class="p">]</span>
     <span class="n">received</span> <span class="o">=</span> <span class="n">transcript</span><span class="p">[</span><span class="n">transcript</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;offer received&#39;</span><span class="p">]</span>
     <span class="n">viewed</span> <span class="o">=</span> <span class="n">transcript</span><span class="p">[</span><span class="n">transcript</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;offer viewed&#39;</span><span class="p">]</span>
@@ -13961,8 +13992,9 @@ div#notebook {
     <span class="n">viewed</span><span class="p">[</span><span class="s1">&#39;offer_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">viewed</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">completed</span><span class="p">[</span><span class="s1">&#39;offer_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">completed</span><span class="p">[</span><span class="s1">&#39;reward&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">completed</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">1</span><span class="p">])</span>
-    
+    <span class="c1"># concat the new dataframes into one dataset transcript</span>
     <span class="n">transcript</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">trans</span><span class="p">,</span><span class="n">received</span><span class="p">,</span><span class="n">viewed</span><span class="p">,</span><span class="n">completed</span><span class="p">])</span>
+    <span class="c1"># select and drop necessary columns </span>
     <span class="n">transcript</span> <span class="o">=</span> <span class="n">transcript</span><span class="p">[[</span><span class="s1">&#39;event&#39;</span> <span class="p">,</span> <span class="s1">&#39;person&#39;</span> <span class="p">,</span> <span class="s1">&#39;offer_id&#39;</span> <span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span> <span class="p">,</span> <span class="s1">&#39;reward&#39;</span> <span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]]</span>
     <span class="n">transcript</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;value&#39;</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
@@ -13976,10 +14008,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[106]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cleaned_transcript</span> <span class="o">=</span> <span class="n">clean_transcript</span><span class="p">(</span><span class="n">transcript</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transcript dataset after cleaning </span>
+<span class="n">cleaned_transcript</span> <span class="o">=</span> <span class="n">clean_transcript</span><span class="p">(</span><span class="n">transcript</span><span class="p">)</span>
 <span class="n">cleaned_transcript</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -13993,7 +14026,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[106]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
@@ -14090,10 +14123,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[107]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">display_customer_profile</span><span class="p">():</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># display function </span>
+<span class="k">def</span> <span class="nf">display_customer_profile</span><span class="p">():</span>
     <span class="sd">&#39;&#39;&#39;Display customer profile with histograms&#39;&#39;&#39;</span>
     
     <span class="c1"># Display Histogram of Customer Age</span>
@@ -14124,7 +14158,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[108]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">display_customer_profile</span><span class="p">()</span>
@@ -14161,7 +14195,7 @@ div#notebook {
 
 
 <div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAY4AAAEWCAYAAABxMXBSAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDIuMS4wLCBodHRwOi8vbWF0cGxvdGxpYi5vcmcvpW3flQAAHlFJREFUeJzt3Xm0HFW59/HvLwOQIIQpKIRAQKICviohCPcqwgXvRaIMV43DQg2IoO/FAXFgXMryxXeJiiiKIIJCmGUQ0CuvNyKgXoUYMJcpYEKAJBBIgEAYghB43j/2blJpuvt0nXPqdHfy+6zV61Tt2lX1dPU+9fTe1V2tiMDMzKxdwzodgJmZ9RYnDjMzK8WJw8zMSnHiMDOzUpw4zMysFCcOMzMrxYmjB0h6QNK7uykOScdLOqedumW3vaaRdIikP3U6DuubpJC0fafj6HZOHCU0OrmtrSeFiPi/EfGp/qwr6TxJJw92TGa9QtJJkuZLekrSbyRt3umYynDiMOsHScM7HUOvU7JGnoMkjeijyghgL+C1wD+AkyoOaVCtkS9aJ0naQdKNkp6UdJekA3L5trlsWJ4/R9KSwnoXSjqqje2vK+n7kh7Oj+9LWjcv20vSIklfkrRE0mJJhxbW3VTSryQtl/RXSSe36i1J+rikByU9LumEumUnSbqwnbp16x0BHAx8VdIzkn5VWPw2Sbfnd2GXSVqvsN77JM3Ox/DPkt7SZPsT8nDDiELZjZI+lae3l3RT3sdjki4r1HuTpBmSnpB0r6QPFZadJ+nM/O7wWeBfJE2RdLekpyU9JOnLzZ532oR+mPd7j6R9CgvGSDo3v14P5ddleGH54ZLm5P3cLWlSLm/Y1grx/ljSdfk4/7ek1+X2sizHsHOh/paSrpS0VNL9kj7f4omMkTQ9131Q0omFdl3fLlZ7PXK835T038BzwHYNtv+ApK/ktvBsPjavzc/laUm/k7Rxof7uuU08Kel/JO1V99qfnJc/k9v/ppIuKvwfTKgLYYpSb+AxSd9RIblJ+mR+LZZJ+q2kbQrLQtKRkuYCc5WcpvS/+FR+Pm8GiIgTI2JBRDwPzCQlkN4REX60+QAeAN5dV3YI8Kc8PRKYBxwPrAPsDTwNvDEvXwDskqfvBeYDOxSW7dzXfoFvADcDmwNjgT8D/ycv2wtYmeuMBKaQ/jk3zssvzY/RwI7AwlrsDfa5I/AM8C5gXeB7edu1OE4CLmynboNtnwec3OA5zgS2BDYB5gCfycsmAUuA3YDhwLRcf90G254ABDCiUHYj8Kk8fQlwAulN03rAO3P5+vl4HEp6NzgJeAzYqRDzU8A7CusuBvbIyzcGJjV5vofk4/HF/Lp8OG9rk7z8auAnOYbN83H4dF42FXgI2BUQsD2wDX23tfNy/LvkWH8P3A98Ih/Dk4Ebct1hwK3A1/K2tiO1zX2bPJ/pwDXABvl4/x04rL5dNHo98muxANgpH+eRTdr7zaST6bj82t8G7ExqX78Hvp7rjgMeJ7X1YcC/5vmxhf3NA14PjAHuzvG+O+9/OvDzwr4DuIHUBrfOdWtt56C8rR3yuicCf65bd0ZedxSwbz6uG+XXbgdgi7rn+gZgKXBAp89vpc6FnQ6glx65QT8DPFl4PMeqxLEH8AgwrLDOJcBJefoC4GjgdaTE8W3gM8C2eVvDWuy3dsK+D5hSWLYv8ECe3gtYweonzSXA7qSTxYvkE0tedjLNE8fXgEsL8+sDL9A4cbSs22Db59E4cXysMP9t4Kw8fSY5ORaW3wvs2WDbE2idOKYDZwNb1a33YeCPdWU/YdUJ6jxget3yBcCngQ37aDeHAA8DKpTNBD7OqqGKUYVlH2XVSf23wBcabLOvtnYe8NPCss8Bcwrz/wt4Mk/vBiyo2/5xFE6ohfLhOd4dC2WfBm6sbxeNXo/8Wnyjjf+zgwvzVwJn1j2Xq/P0McAFdev/FphW2N8JhWWnAtcV5vcHZhfmA3hPYf4/gOvz9HXkBJnnh5H+/7cprLt3YfnepMSzOw3+t4FNcxs6utXx6MaHh6rKOygiNqo9SA2rZktgYUS8XCh7kPSuCOAm0sn9XcAfSI16z/z4Y916zWyZt1nc/paF+ccjYmVh/jngNaTeyQjSu+qa4nSj/byyPCKeJb2TG2jdVh4pTNfihvQO+0t5KOJJSU8C41n9ebfrq6R3fzPz8M4nC/vYrW4fB5OSfE398foA6Z3ug3n4659a7PehyGeLrPa61XoPiwv7/Qmp5wHped7XYHt9tTWARwvTKxrMF4/vlnXP/XgaD59sRuqV1LfBcQ3qNtOq3dWUiX1qXezvBLbox7YaxVf8/9oG+EFhP0+Q2tK4RutGxO+BHwFnAI9KOlvShoW6HwDmRcT36DFOHIPrYWC8Vr/gtzVpqAFS4tiDlDxuAv5EGvrYM8+3u49tCvNb57K+LCUNl2xVKBvfov7i4nJJo0nvkAZaF9I7szIWAt8sJuyIGB0RlzSo+2z+O7pQ9srJPyIeiYjDI2JL0jvlHyt9/HIhcFPdPl4TEf+7WdwR8deIOJB0kr8a+EWL5zBOkgrztddtIekd/GaF/W4YETsVnvvrG2yvr7ZWxkLg/rrnvkFETGlQ9zFSz7W+Ddb2+yxNjn3BYN6SeyGpx1GMff2I+NYAtln8vyj+fy0kDSEW9zUqIv5cqF/fRk6PiF1IQ3NvAL5SWLwF7f3vdh0njsF1C+kf56uSRuaLdPuTrisQEXNJ73A+BvwhIpaT3v18gPYTxyXAiZLGStqMNEx0YR/rEBEvAVcBJ0kaLelNpPHuZq4A3ifpnZLWIV03adZeytSF9JxfdVG0hZ8Cn5G0W77guL6k90raoL5iRCwlncQ+Jml47lG8cuKVNFVSLXkuI/2jvwT8GniD0kX+kfmxq6QdGgUkaR1JB0saExEvAsvzdprZHPh83u5U0nj3byJiMfBfwKmSNpQ0TNLrJe2Z1zsH+LKkXfJz3z5fkG3Z1kqaCSyXdIykUfm4vVnSrvUVczv6BfBNSRvkWI5mVRucDbxL0taSxpCGvKp0IbC/pH1z3OspfUhkqz7XbO4rkjaWNB74AlD7AMVZwHGSdoJXPiQwtdlGcvvZTdJI0mv1PKu3kVOBIwcQZ8c4cQyiiHgBOADYj/TO7MfAJyLinkK1m0jDSQsK8wL+1uZuTgZmAbcDd5AuGrb7nYjPki4QPkK63nIJ6d1uo+dyF6lRX0zqUSwDFg20bnYusGPu8l/dV9ARMQs4nNTtX0a6QHlIi1UOJ72ze5z0Tq/4jnBX4BZJzwDXkq4f3B8RTwP/BnyE9C7wEeAU0sXYZj4OPCBpOela1cda1L0FmEhqF98EPhgRteG8T5CGf+7Oz+8K8lBLRFye619Muvh9NemiejttrS05GewPvI10Af0xUsIa02SVz5FOhPNJveaLgZ/lbc0gnWhvJ10Y/nXZeErGvhA4kDS0tpTUK/gKAzu3XUOKfTbwn6T2SkT8ktQmLs2v+Z2k49/MhqQ3PctIQ16PA98tLP88KXn0HK0+7GprE0mnAK+LiGmdjsXMeod7HGsRpe8pvCUPebwdOAz4ZafjMrPe0te3G23NsgFpeGpL0sd0TyV1y83M2uahKjMzK8VDVWZmVkpPD1VtttlmMWHChE6HYWbWU2699dbHImJsf9fv6cQxYcIEZs2a1ekwzMx6iqQH+67VnIeqzMysFCcOMzMrxYnDzMxKceIwM7NSnDjMzKwUJw4zMyvFicPMzEpx4jAzs1KcOMzMrJSe/ub4mmbUkY1/7XLFGccOcSRmZs25x2FmZqU4cZiZWSlOHGZmVooTh5mZleLEYWZmpThxmJlZKU4cZmZWir/HsQby90HMrErucZiZWSnucfSAZj0IM7NOcI/DzMxKceIwM7NSnDjMzKwUJw4zMyvFicPMzEpx4jAzs1KcOMzMrBQnDjMzK8VfAOwAf6HPzHqZexxmZlaKE4eZmZXixGFmZqU4cZiZWSlOHGZmVooTh5mZleLEYWZmpVSaOCR9UdJdku6UdImk9SRtK+kWSXMlXSZpnVx33Tw/Ly+fUGVsZmbWP5UlDknjgM8DkyPizcBw4CPAKcBpETERWAYcllc5DFgWEdsDp+V6ZmbWZaoeqhoBjJI0AhgNLAb2Bq7Iy88HDsrTB+Z58vJ9JKni+MzMrKTKEkdEPAR8F1hAShhPAbcCT0bEylxtETAuT48DFuZ1V+b6m9ZvV9IRkmZJmrV06dKqwjczsyaqHKramNSL2BbYElgf2K9B1ait0mLZqoKIsyNickRMHjt27GCFa2ZmbapyqOrdwP0RsTQiXgSuAv4Z2CgPXQFsBTycpxcB4wHy8jHAExXGZ2Zm/VBl4lgA7C5pdL5WsQ9wN3AD8MFcZxpwTZ6+Ns+Tl/8+Il7V4zAzs86q8hrHLaSL3LcBd+R9nQ0cAxwtaR7pGsa5eZVzgU1z+dHAsVXFZmZm/Vfp73FExNeBr9cVzwfe3qDu88DUKuMxM7OB8zfHzcysFCcOMzMrxYnDzMxKceIwM7NSnDjMzKwUJw4zMyvFicPMzEpx4jAzs1KcOMzMrBQnDjMzK8WJw8zMSnHiMDOzUpw4zMysFCcOMzMrxYnDzMxKceIwM7NSnDjMzKwUJw4zMyvFicPMzEpx4jAzs1KcOMzMrBQnDjMzK8WJw8zMSnHiMDOzUpw4zMysFCcOMzMrxYnDzMxKceIwM7NSRnQ6gDXZqCO/1ekQzMwGnXscZmZWihOHmZmV4qGqNrUadlpxxrFDGImZWWe5x2FmZqWstT2OZj0I9x7MzFpzj8PMzEqptMchaSPgHODNQACfBO4FLgMmAA8AH4qIZZIE/ACYAjwHHBIRt1UZXyP+CK2ZWWtV9zh+APy/iHgT8FZgDnAscH1ETASuz/MA+wET8+MI4MyKYzMzs36oLHFI2hB4F3AuQES8EBFPAgcC5+dq5wMH5ekDgemR3AxsJGmLquIzM7P+aStxSHpzP7a9HbAU+Lmkv0k6R9L6wGsjYjFA/rt5rj8OWFhYf1Euq4/lCEmzJM1aunRpP8IyM7OBaLfHcZakmZL+I1+3aMcIYBJwZkTsDDzLqmGpRtSgLF5VEHF2REyOiMljx45tMxQzMxssbV0cj4h3SppIurg9S9JM4OcRMaPFaouARRFxS56/gpQ4HpW0RUQszkNRSwr1xxfW3wp4uMRz6RhfUDeztUnb1zgiYi5wInAMsCdwuqR7JL2/Sf1HgIWS3piL9gHuBq4FpuWyacA1efpa4BNKdgeeqg1pmZlZ92irxyHpLcChwHuBGcD+EXGbpC2BvwBXNVn1c8BFktYB5udtDAN+IekwYAEwNdf9DemjuPNIH8c9tF/PyMzMKtXu9zh+BPwUOD4iVtQKI+JhSSc2WykiZgOTGyzap0HdAI5sMx4zM+uQdhPHFGBFRLwEIGkYsF5EPBcRF1QWnZmZdZ12r3H8DhhVmB+dy8zMbC3TbuJYLyKeqc3k6dHVhGRmZt2s3cTxrKRJtRlJuwArWtQ3M7M1VLvXOI4CLpdU+17FFsCHqwnJzMy6WbtfAPyrpDcBbyR9w/ueiHix0sjMzKwrlbmt+q6kW6GPAHaWRERMryQqMzPrWu1+AfAC4PXAbOClXByAE4eZ2Vqm3R7HZGDH/CU9MzNbi7X7qao7gddVGYiZmfWGdnscmwF357vi/qNWGBEHVBKVmZl1rXYTx0lVBmFmZr2j3Y/j3iRpG2BiRPxO0mhgeLWhmZlZN2r3p2MPJ/0Q009y0Tjg6qqCMjOz7tXuxfEjgXcAy+GVH3XavOUaZma2Rmo3cfwjIl6ozUgaQYPfAzczszVfu4njJknHA6Mk/StwOfCr6sIyM7Nu1W7iOBZYCtwBfJr0M69Nf/nPzMzWXO1+qupl0k/H/rTacMzMrNu1e6+q+2lwTSMithv0iMzMrKuVuVdVzXrAVGCTwQ/HzMy6XVvXOCLi8cLjoYj4PrB3xbGZmVkXaneoalJhdhipB7JBJRGZmVlXa3eo6tTC9ErgAeBDgx6NmZl1vXY/VfUvVQdiZma9od2hqqNbLY+I7w1OOGZm1u3KfKpqV+DaPL8/8AdgYRVBmZlZ9yrzQ06TIuJpAEknAZdHxKeqCszMzLpTu7cc2Rp4oTD/AjBh0KMxM7Ou126P4wJgpqRfkr5B/u/A9MqiMjOzrtXup6q+Kek6YI9cdGhE/K26sMzMrFu1O1QFMBpYHhE/ABZJ2raimMzMrIu1+9OxXweOAY7LRSOBC6sKyszMule7PY5/Bw4AngWIiIfxLUfMzNZK7SaOFyIiyLdWl7R+dSGZmVk3azdx/ELST4CNJB0O/I42f9RJ0nBJf5P06zy/raRbJM2VdJmkdXL5unl+Xl4+ofzTMTOzqrV7W/XvAlcAVwJvBL4WET9scx9fAOYU5k8BTouIicAy4LBcfhiwLCK2B07L9czMrMv0mThyj+F3ETEjIr4SEV+OiBntbFzSVsB7gXPyvEi/43FFrnI+cFCePjDPk5fvk+ubmVkX6TNxRMRLwHOSxvRj+98Hvgq8nOc3BZ6MiJV5fhEwLk+PI9/7Ki9/KtdfjaQjJM2SNGvp0qX9CMnMzAai3W+OPw/cIWkG+ZNVABHx+WYrSHofsCQibpW0V624QdVoY9mqgoizgbMBJk+e/KrlZmZWrXYTx3/mRxnvAA6QNIX0O+UbknogG0kakXsVWwEP5/qLgPGkLxeOAMYAT5Tcp5mZVaxl4pC0dUQsiIjzW9VrJCKOI39hMPc4vhwRB0u6HPggcCkwDbgmr3Jtnv9LXv77/BFgMzPrIn1d47i6NiHpykHa5zHA0ZLmka5hnJvLzwU2zeVHA8cO0v7MzGwQ9TVUVbzusF1/dxIRNwI35un5wNsb1HkemNrffZiZ2dDoq8cRTabNzGwt1VeP462SlpN6HqPyNHk+ImLDSqMzM7Ou0zJxRMTwoQrEzMx6Q5nf4zAzM3PiMDOzcpw4zMysFCcOMzMrxYnDzMxKceIwM7NSnDjMzKwUJw4zMyul3duqm61RRh35rYblK87wvTXN+uLEYWsEJwKzoeOhKjMzK8U9DrM2uEdjtooTx1pkKE5+vX6CbRa/ma3ixGFDomxC6fUEZLYmc+Iwn6TNrBQnDiutl4ZzeilWs17hxGE2AO6t2drIicOaGop362tqj6A/z8vJxnqFE4dZlxisJOoEZFXzFwDNzKwU9zisp6ypQ1tmvcQ9DjMzK8WJw8zMSnHiMDOzUpw4zMysFCcOMzMrxYnDzMxKceIwM7NSnDjMzKwUJw4zMyvFicPMzEpx4jAzs1IqSxySxku6QdIcSXdJ+kIu30TSDElz89+Nc7kknS5pnqTbJU2qKjYzM+u/KnscK4EvRcQOwO7AkZJ2BI4Fro+IicD1eR5gP2BifhwBnFlhbGZm1k+VJY6IWBwRt+Xpp4E5wDjgQOD8XO184KA8fSAwPZKbgY0kbVFVfGZm1j9Dco1D0gRgZ+AW4LURsRhScgE2z9XGAQsLqy3KZWZm1kUqTxySXgNcCRwVEctbVW1QFg22d4SkWZJmLV26dLDCNDOzNlWaOCSNJCWNiyLiqlz8aG0IKv9dkssXAeMLq28FPFy/zYg4OyImR8TksWPHVhe8mZk1VOWnqgScC8yJiO8VFl0LTMvT04BrCuWfyJ+u2h14qjakZWZm3aPKn459B/Bx4A5Js3PZ8cC3gF9IOgxYAEzNy34DTAHmAc8Bh1YYm5mZ9VNliSMi/kTj6xYA+zSoH8CRVcVjZmaDw98cNzOzUpw4zMysFCcOMzMrxYnDzMxKceIwM7NSnDjMzKwUJw4zMyvFicPMzEpx4jAzs1KcOMzMrBQnDjMzK8WJw8zMSnHiMDOzUpw4zMysFCcOMzMrxYnDzMxKceIwM7NSnDjMzKwUJw4zMyvFicPMzEpx4jAzs1JGdDoAM+sto478VsPyFWccO8SRWKc4cZjZGqvqJLe2JlEnDrO13Np68usV3fj6OHGYrWGanWh6Saeew9q23/5y4jCzhsqezPrzznhtO1H3WoJoxonDzCq1ppwsbRV/HNfMzEpxj8PMbJCt6b0s9zjMzKwUJw4zMyvFicPMzEpx4jAzs1KcOMzMrBQnDjMzK8WJw8zMSumqxCHpPZLulTRPku+wZmbWhbomcUgaDpwB7AfsCHxU0o6djcrMzOp1TeIA3g7Mi4j5EfECcClwYIdjMjOzOt10y5FxwMLC/CJgt/pKko4Ajsizz0i6dwhi64/NgMc6HUQbeiHOXogRHOdg64U4Oxajfnxcmer1cW4zkH13U+JQg7J4VUHE2cDZ1YczMJJmRcTkTsfRl16IsxdiBMc52Hohzl6IEQY/zm4aqloEjC/MbwU83KFYzMysiW5KHH8FJkraVtI6wEeAazsck5mZ1emaoaqIWCnps8BvgeHAzyLirg6HNRBdP5yW9UKcvRAjOM7B1gtx9kKMMMhxKuJVlxHMzMya6qahKjMz6wFOHGZmVooTRz9IeqOk2YXHcklHSTpJ0kOF8imFdY7Lt1K5V9K+Fcb2M0lLJN1ZKNtE0gxJc/PfjXO5JJ2e47pd0qTCOtNy/bmSpg1RnN+RdE+O5ZeSNsrlEyStKBzXswrr7CLpjvwcTpfU6GPdgx1n6de5ytvpNInxskJ8D0iancs7eSzHS7pB0hxJd0n6Qi7vmvbZIsauapst4hyathkRfgzgQbqQ/wjpCzUnAV9uUGdH4H+AdYFtgfuA4RXF8y5gEnBnoezbwLF5+ljglDw9BbiO9B2a3YFbcvkmwPz8d+M8vfEQxPlvwIg8fUohzgnFenXbmQn8U34O1wH7DUGcpV7n/LgP2A5YJ9fZscoY65afCnytC47lFsCkPL0B8Pd8zLqmfbaIsavaZos4h6RtuscxcPsA90XEgy3qHAhcGhH/iIj7gXmkW6wMuoj4A/BEg/2fn6fPBw4qlE+P5GZgI0lbAPsCMyLiiYhYBswA3lN1nBHxXxGxMs/eTPouT1M51g0j4i+R/jums+q5VRZnC81e50pvp9Mqxvwu90PAJa22MUTHcnFE3JannwbmkO4Y0TXts1mM3dY2WxzLZga1bTpxDNxHWP2f8rO5O/uzWpebxrdTafUiD7bXRsRiSA0O2LyPuDodL8AnSe/SaraV9DdJN0naI5eNy7HVDGWcZV7nTh7PPYBHI2Juoazjx1LSBGBn4Ba6tH3WxVjUVW2zQZyVt00njgFQ+qLiAcDluehM4PXA24DFpCECaPN2Kh3QLK6OxivpBGAlcFEuWgxsHRE7A0cDF0vakM7FWfZ17uTx/Cirv7Hp+LGU9BrgSuCoiFjeqmqTmCqPtVmM3dY2G8Q5JG3TiWNg9gNui4hHASLi0Yh4KSJeBn7KquGoTt9O5dHcda51oZf0EVfH4s0XOt8HHJy7+OTu9eN5+lbSmOwbcpzFIYMhibMfr3NHjqekEcD7gctqZZ0+lpJGkk50F0XEVbm4q9pnkxi7rm02inPI2uZgXaxZGx+k8cBDC/NbFKa/SBpTBNiJ1S9Mzaeii+N5fxNY/WLud1j94uO38/R7Wf3i48xcvglwP+nC48Z5epMhiPM9wN3A2Lp6Y2vHi3QR76FaPKRb1ezOqguQU4YgzlKvM+kODfNzWe0C5E5Vxlg4njd1y7HM250OfL+uvGvaZ4sYu6pttohzSNrmoP6DrU0PYDTwODCmUHYBcAdwO+k+W8UX8QTSu5F7GeRPq9TFdQmpi/oi6d3EYcCmwPXA3Py31rBF+vGs+3Lckwvb+STpAto8Csmx4jjnkcZbZ+fHWbnuB4C7cqO+Ddi/sJ3JwJ35OfyIfDeEiuMs/TqTPiH097zshKpjzOXnAZ+pq9vJY/lO0jDI7YXXeEo3tc8WMXZV22wR55C0Td9yxMzMSvE1DjMzK8WJw8zMSnHiMDOzUpw4zMysFCcOMzMrpWt+AdCs20l6ifRRx5Gkbw+fT/oc/csdDcxsiDlxmLVvRUS8DUDS5sDFwBjg6x2NymyIeajKrB8iYglwBOmGcsq/y/BHSbflxz8DSLpA0it3G5V0kaQDJO0kaWb+zYTbJU3s1HMxK8tfADRrk6RnIuI1dWXLgDcBTwMvR8TzOQlcEhGTJe0JfDEiDpI0hvQN34nAacDNEXFRvlnm8IhYMbTPyKx/PFRlNjC1u4uOBH4k6W3AS6Qb3RERN0k6Iw9tvR+4MiJWSvoLcIKkrYCrYvXbnpt1NQ9VmfWTpO1ISWIJ6YZyjwJvJd2jaJ1C1QuAg4FDgZ8DRMTFpFvyrwB+K2nvoYvcbGCcOMz6QdJY4CzgR5HGe8cAi/MnrD5OuvNozXnAUQARcVdefztgfkScTroZ3VuGLnqzgfFQlVn7RkmazaqP414AfC8v+zFwpaSpwA3As7WVIuJRSXOAqwvb+jDwMUkvkn6z/htDEL/ZoPDFcbOKSRpN+v7HpIh4qtPxmA2Uh6rMKiTp3cA9wA+dNGxN4R6HmZmV4h6HmZmV4sRhZmalOHGYmVkpThxmZlaKE4eZmZXy/wHiVIpDrupFXQAAAABJRU5ErkJggg==
 "
 >
 </div>
@@ -14205,10 +14239,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Observations">Observations<a class="anchor-link" href="#Observations">&#182;</a></h2><ul>
-<li>The Histogram above shows that the highest number of customers are between <strong>50-60</strong>, aslo it's a normal distribution </li>
-<li>The Histogram above shows that the majority of the income is between <strong>50000-70000 </strong> by average (65404), and it's a right skewed distribution</li>
-</ul>
+<h2 id="Observations">Observations<a class="anchor-link" href="#Observations">&#182;</a></h2><p>Doing an exploratory data analysis on customer attributes as Age, income, gender, can give us some answers to our first and second questions, that <strong>men</strong> consume Starbucks products more than women with an average age of <strong>54</strong> (it’s a normal distribution), and an average income of <strong>65404</strong> ( it’s a right-skewed distribution), from the last histogram we can say that the average of days after which users can become members ranges from <strong>800 to 900</strong>.</p>
 
 </div>
 </div>
@@ -14216,16 +14247,18 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Data-Preparation">Data Preparation<a class="anchor-link" href="#Data-Preparation">&#182;</a></h1>
+<h1 id="Data-Preparation">Data Preparation<a class="anchor-link" href="#Data-Preparation">&#182;</a></h1><p>For data modeling , we need to merge and transform our dataset after some cleaning steps .</p>
+
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[109]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">transcript</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">cleaned_transcript</span> <span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span> <span class="p">,</span><span class="n">prefix_sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># from transcript dataset create dummies variable</span>
+<span class="n">transcript</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">cleaned_transcript</span> <span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span> <span class="p">,</span><span class="n">prefix_sep</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="n">transcript</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -14239,7 +14272,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[109]:</div>
+    <div class="prompt output_prompt">Out[14]:</div>
 
 
 
@@ -14347,10 +14380,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[110]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">transcript</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># from new transcript dataset drop duplicates</span>
+<span class="n">transcript</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14360,7 +14394,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[111]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">transcript</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -14376,7 +14410,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[111]:</div>
+    <div class="prompt output_prompt">Out[16]:</div>
 
 
 
@@ -14393,24 +14427,167 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[112]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">transcript</span> <span class="p">,</span> <span class="n">profile</span> <span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;person&#39;</span> <span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># merge new transcript dataset with profile </span>
+<span class="n">merged</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">transcript</span> <span class="p">,</span> <span class="n">profile</span> <span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;person&#39;</span> <span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span>
 <span class="n">merged</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># Fill nans with 0</span>
 <span class="n">merged</span><span class="o">.</span><span class="n">reward</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">merged</span><span class="o">.</span><span class="n">amount</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">merged</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[17]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>person</th>
+      <th>offer_id</th>
+      <th>time</th>
+      <th>amount</th>
+      <th>reward</th>
+      <th>offer completed</th>
+      <th>offer received</th>
+      <th>offer viewed</th>
+      <th>transaction</th>
+      <th>age</th>
+      <th>became_member_on</th>
+      <th>gender</th>
+      <th>income</th>
+      <th>days</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>02c083884c7d45b39cc68e1314fec56c</td>
+      <td>NaN</td>
+      <td>0</td>
+      <td>0.83</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>20.0</td>
+      <td>2016-07-11</td>
+      <td>F</td>
+      <td>30000.0</td>
+      <td>1353</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>02c083884c7d45b39cc68e1314fec56c</td>
+      <td>NaN</td>
+      <td>6</td>
+      <td>1.44</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>20.0</td>
+      <td>2016-07-11</td>
+      <td>F</td>
+      <td>30000.0</td>
+      <td>1353</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>02c083884c7d45b39cc68e1314fec56c</td>
+      <td>NaN</td>
+      <td>12</td>
+      <td>4.56</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>20.0</td>
+      <td>2016-07-11</td>
+      <td>F</td>
+      <td>30000.0</td>
+      <td>1353</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>02c083884c7d45b39cc68e1314fec56c</td>
+      <td>NaN</td>
+      <td>84</td>
+      <td>1.53</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>20.0</td>
+      <td>2016-07-11</td>
+      <td>F</td>
+      <td>30000.0</td>
+      <td>1353</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>02c083884c7d45b39cc68e1314fec56c</td>
+      <td>NaN</td>
+      <td>90</td>
+      <td>0.50</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>20.0</td>
+      <td>2016-07-11</td>
+      <td>F</td>
+      <td>30000.0</td>
+      <td>1353</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[113]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sort values</span>
@@ -14429,10 +14606,11 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[114]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">merged</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;offer_id&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># drop missing values </span>
+<span class="n">merged</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;offer_id&#39;</span><span class="p">]</span> <span class="p">,</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14442,20 +14620,199 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[115]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">merged</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">portfolio</span> <span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;offer_id&#39;</span> <span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;id&#39;</span>  <span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># merge the cleaned merged with protfolio</span>
+<span class="n">merged</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">portfolio</span> <span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;offer_id&#39;</span> <span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">&#39;id&#39;</span>  <span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">merged</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>person</th>
+      <th>offer_id</th>
+      <th>time</th>
+      <th>amount</th>
+      <th>reward_x</th>
+      <th>offer completed</th>
+      <th>offer received</th>
+      <th>offer viewed</th>
+      <th>transaction</th>
+      <th>age</th>
+      <th>became_member_on</th>
+      <th>gender</th>
+      <th>income</th>
+      <th>days</th>
+      <th>channels</th>
+      <th>difficulty</th>
+      <th>duration</th>
+      <th>id</th>
+      <th>offer_type</th>
+      <th>reward_y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>a5c24057de1147a798422162559bbe83</td>
+      <td>4d5c57ea9a6940dd891ad53e9dbe8da0</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>33.0</td>
+      <td>2018-06-12</td>
+      <td>M</td>
+      <td>45000.0</td>
+      <td>652</td>
+      <td>[web, email, mobile, social]</td>
+      <td>10</td>
+      <td>5</td>
+      <td>4d5c57ea9a6940dd891ad53e9dbe8da0</td>
+      <td>bogo</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>84eb11751c674c5ab910f3bebe78586d</td>
+      <td>0b1e1539f2cc45b7b9fa7c272da2e1d7</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>73.0</td>
+      <td>2013-11-15</td>
+      <td>M</td>
+      <td>63000.0</td>
+      <td>2322</td>
+      <td>[web, email]</td>
+      <td>20</td>
+      <td>10</td>
+      <td>0b1e1539f2cc45b7b9fa7c272da2e1d7</td>
+      <td>discount</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>8dc17515545e42d9a2974a3aebc3aa69</td>
+      <td>fafdcd668e3743c1bb461111dcafc2a4</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>61.0</td>
+      <td>2018-06-08</td>
+      <td>M</td>
+      <td>43000.0</td>
+      <td>656</td>
+      <td>[web, email, mobile, social]</td>
+      <td>10</td>
+      <td>10</td>
+      <td>fafdcd668e3743c1bb461111dcafc2a4</td>
+      <td>discount</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>a5675e02cac04aefb87d21551a3dfa8c</td>
+      <td>f19421c1d4aa40978ebb69ca19b0e20d</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>42.0</td>
+      <td>2017-11-20</td>
+      <td>M</td>
+      <td>54000.0</td>
+      <td>856</td>
+      <td>[web, email, mobile, social]</td>
+      <td>5</td>
+      <td>5</td>
+      <td>f19421c1d4aa40978ebb69ca19b0e20d</td>
+      <td>bogo</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3339d9d8f5ff4664bd259572330c5dbf</td>
+      <td>ae264e3637204a6fb9bb56bc8210ddfd</td>
+      <td>0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>62.0</td>
+      <td>2014-11-05</td>
+      <td>M</td>
+      <td>44000.0</td>
+      <td>1967</td>
+      <td>[email, mobile, social]</td>
+      <td>10</td>
+      <td>7</td>
+      <td>ae264e3637204a6fb9bb56bc8210ddfd</td>
+      <td>bogo</td>
+      <td>10</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[116]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">Model_data</span> <span class="o">=</span> <span class="n">merged</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;person&#39;</span> <span class="p">,</span> <span class="s1">&#39;offer_type&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
@@ -14469,21 +14826,133 @@ div#notebook {
         <span class="s1">&#39;income&#39;</span><span class="p">:</span><span class="s1">&#39;last&#39;</span>
     <span class="p">}</span>
 <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="n">Model_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>person</th>
+      <th>offer_type</th>
+      <th>offer completed</th>
+      <th>offer received</th>
+      <th>offer viewed</th>
+      <th>age</th>
+      <th>became_member_on</th>
+      <th>gender</th>
+      <th>income</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0009655768c64bdeb2e877511632db8f</td>
+      <td>bogo</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>33.0</td>
+      <td>2017-04-21</td>
+      <td>M</td>
+      <td>72000.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0009655768c64bdeb2e877511632db8f</td>
+      <td>discount</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+      <td>33.0</td>
+      <td>2017-04-21</td>
+      <td>M</td>
+      <td>72000.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0009655768c64bdeb2e877511632db8f</td>
+      <td>informational</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>33.0</td>
+      <td>2017-04-21</td>
+      <td>M</td>
+      <td>72000.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0011e0d4e6b944f998e987f904e8c1e5</td>
+      <td>bogo</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>40.0</td>
+      <td>2018-01-09</td>
+      <td>O</td>
+      <td>57000.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0011e0d4e6b944f998e987f904e8c1e5</td>
+      <td>discount</td>
+      <td>2</td>
+      <td>2</td>
+      <td>2</td>
+      <td>40.0</td>
+      <td>2018-01-09</td>
+      <td>O</td>
+      <td>57000.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[117]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">offers_transformation</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Function: to transform the ofers</span>
+<span class="sd">    Function: to transform the offers</span>
 <span class="sd">    </span>
 <span class="sd">    Returns: The transformed offers</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -14493,18 +14962,18 @@ div#notebook {
 
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;discount_received&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">df</span><span class="p">[</span><span class="s1">&#39;discount_completed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
+    <span class="c1"># Transform BOGO offer </span>
     <span class="k">for</span> <span class="n">index</span> <span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         <span class="k">if</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;offer_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;bogo&#39;</span><span class="p">):</span>
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span> <span class="p">,</span> <span class="s1">&#39;bogo_completed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;offer completed&#39;</span><span class="p">]</span>
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span> <span class="p">,</span> <span class="s1">&#39;bogo_received&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;offer received&#39;</span><span class="p">]</span>
-
+    <span class="c1"># Transform dsicount offer</span>
         <span class="k">elif</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;offer_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;discount&#39;</span><span class="p">):</span>
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span> <span class="p">,</span> <span class="s1">&#39;discount_completed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;offer completed&#39;</span><span class="p">]</span>
             <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span> <span class="p">,</span> <span class="s1">&#39;discount_received&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;offer received&#39;</span><span class="p">]</span>
         
         
-        
+    <span class="c1"># groupby by person    </span>
     <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;person&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
     <span class="p">{</span>
         <span class="s1">&#39;age&#39;</span><span class="p">:</span><span class="s1">&#39;last&#39;</span><span class="p">,</span>
@@ -14526,7 +14995,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[118]:</div>
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trans_data</span> <span class="o">=</span> <span class="n">offers_transformation</span><span class="p">(</span><span class="n">Model_data</span><span class="p">)</span>
@@ -14539,7 +15008,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[119]:</div>
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trans_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -14555,7 +15024,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[119]:</div>
+    <div class="prompt output_prompt">Out[44]:</div>
 
 
 
@@ -14663,7 +15132,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[120]:</div>
+<div class="prompt input_prompt">In&nbsp;[46]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create colunms with the precnetage of each offer</span>
@@ -14678,7 +15147,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[121]:</div>
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trans_data</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span> <span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -14691,7 +15160,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[122]:</div>
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trans_data</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -14707,7 +15176,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[122]:</div>
+    <div class="prompt output_prompt">Out[48]:</div>
 
 
 
@@ -14735,7 +15204,7 @@ dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[123]:</div>
+<div class="prompt input_prompt">In&nbsp;[49]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trans_data</span><span class="p">[</span><span class="s1">&#39;bogo_offer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -14758,7 +15227,7 @@ dtype: int64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[124]:</div>
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trans_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -14774,7 +15243,7 @@ dtype: int64</pre>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[124]:</div>
+    <div class="prompt output_prompt">Out[51]:</div>
 
 
 
@@ -14914,7 +15383,7 @@ dtype: int64</pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>At this point we will build a model that predict whether or not the offer will respond by the person,
+<p>After our data preparation adventure we will build a model that predict whether or not the offer will respond by the person,
 If the answer is yes, the model will choose discount or BOGO .</p>
 
 </div>
@@ -14922,10 +15391,11 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[245]:</div>
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mdata</span> <span class="o">=</span> <span class="n">trans_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="c1"># create year and month columns from became_member_on column</span>
 <span class="n">mdata</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdata</span><span class="o">.</span><span class="n">became_member_on</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span>
 <span class="n">mdata</span><span class="p">[</span><span class="s1">&#39;month&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdata</span><span class="o">.</span><span class="n">became_member_on</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span>
 </pre></div>
@@ -14937,10 +15407,11 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[246]:</div>
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">mdata</span> <span class="o">=</span> <span class="n">mdata</span><span class="p">[[</span><span class="s1">&#39;age&#39;</span> <span class="p">,</span> <span class="s1">&#39;gender&#39;</span> <span class="p">,</span> <span class="s1">&#39;income&#39;</span> <span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select necessary features </span>
+<span class="n">mdata</span> <span class="o">=</span> <span class="n">mdata</span><span class="p">[[</span><span class="s1">&#39;age&#39;</span> <span class="p">,</span> <span class="s1">&#39;gender&#39;</span> <span class="p">,</span> <span class="s1">&#39;income&#39;</span> <span class="p">,</span>
                            <span class="s1">&#39;year&#39;</span> <span class="p">,</span> <span class="s1">&#39;month&#39;</span> <span class="p">,</span> <span class="s1">&#39;discount_offer&#39;</span> <span class="p">,</span>
                            <span class="s1">&#39;bogo_offer&#39;</span><span class="p">]]</span>
 <span class="n">mdata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -14956,7 +15427,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[246]:</div>
+    <div class="prompt output_prompt">Out[53]:</div>
 
 
 
@@ -15052,10 +15523,11 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[247]:</div>
+<div class="prompt input_prompt">In&nbsp;[54]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_mdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">mdata</span> <span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#dummies the gender column</span>
+<span class="n">new_mdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">mdata</span> <span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -15065,25 +15537,139 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[248]:</div>
+<div class="prompt input_prompt">In&nbsp;[55]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">new_mdata</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;discount_offer&#39;</span> <span class="p">,</span><span class="s1">&#39;bogo_offer&#39;</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select features and target </span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">new_mdata</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;discount_offer&#39;</span> <span class="p">,</span><span class="s1">&#39;bogo_offer&#39;</span><span class="p">])</span>
 <span class="n">y_bogo</span> <span class="o">=</span> <span class="n">new_mdata</span><span class="o">.</span><span class="n">bogo_offer</span>
 <span class="n">y_discount</span> <span class="o">=</span> <span class="n">new_mdata</span><span class="o">.</span><span class="n">discount_offer</span>
+<span class="n">new_mdata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[55]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>age</th>
+      <th>income</th>
+      <th>year</th>
+      <th>month</th>
+      <th>discount_offer</th>
+      <th>bogo_offer</th>
+      <th>gender_F</th>
+      <th>gender_M</th>
+      <th>gender_O</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>33.0</td>
+      <td>72000.0</td>
+      <td>2017</td>
+      <td>4</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>40.0</td>
+      <td>57000.0</td>
+      <td>2018</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>59.0</td>
+      <td>90000.0</td>
+      <td>2016</td>
+      <td>3</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>24.0</td>
+      <td>60000.0</td>
+      <td>2016</td>
+      <td>11</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>26.0</td>
+      <td>73000.0</td>
+      <td>2017</td>
+      <td>6</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[249]:</div>
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_bogo_train</span><span class="p">,</span> <span class="n">y_bogo_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_bogo</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># split data set into train and test </span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_bogo_train</span><span class="p">,</span> <span class="n">y_bogo_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_bogo</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_discount_train</span><span class="p">,</span> <span class="n">y_discount_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_discount</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 
@@ -15104,7 +15690,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[202]:</div>
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">LR_bogo</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
@@ -15123,7 +15709,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[202]:</div>
+    <div class="prompt output_prompt">Out[57]:</div>
 
 
 
@@ -15135,6 +15721,43 @@ If the answer is yes, the model will choose discount or BOGO .</p>
           verbose=0, warm_start=False)</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  LogisticRegression on training set: {round(LR_bogo.score(X_train,y_bogo_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  LogisticRegression on test set: {round(LR_bogo.score(X_test,y_bogo_test)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  LogisticRegression on training set: {round(LR_discount.score(X_train,y_discount_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  LogisticRegression on test set: {round(LR_discount.score(X_test,y_discount_test)*100,2)}%.&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bogo offer Accuracy of  LogisticRegression on training set: 61.29%.
+Bogo offer Accuracy of  LogisticRegression on test set: 61.78%.
+Discount offer Accuracy of  LogisticRegression on training set: 59.02%.
+Discount offer Accuracy of  LogisticRegression on test set: 58.7%.
+</pre>
+</div>
 </div>
 
 </div>
@@ -15153,7 +15776,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[204]:</div>
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">KNN_bogo</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">()</span>
@@ -15172,7 +15795,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[204]:</div>
+    <div class="prompt output_prompt">Out[59]:</div>
 
 
 
@@ -15183,6 +15806,43 @@ If the answer is yes, the model will choose discount or BOGO .</p>
            weights=&#39;uniform&#39;)</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  KNeighborsClassifier on training set: {round(KNN_bogo.score(X_train,y_bogo_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  KNeighborsClassifier on test set: {round(KNN_bogo.score(X_test,y_bogo_test)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  KNeighborsClassifier on training set: {round(KNN_discount.score(X_train,y_discount_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  KNeighborsClassifier on test set: {round(KNN_discount.score(X_test,y_discount_test)*100,2)}%.&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bogo offer Accuracy of  KNeighborsClassifier on training set: 73.13%.
+Bogo offer Accuracy of  KNeighborsClassifier on test set: 57.38%.
+Discount offer Accuracy of  KNeighborsClassifier on training set: 71.43%.
+Discount offer Accuracy of  KNeighborsClassifier on test set: 54.3%.
+</pre>
+</div>
 </div>
 
 </div>
@@ -15201,7 +15861,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[200]:</div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">SVC_bogo</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">()</span>
@@ -15220,7 +15880,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[200]:</div>
+    <div class="prompt output_prompt">Out[61]:</div>
 
 
 
@@ -15232,6 +15892,43 @@ If the answer is yes, the model will choose discount or BOGO .</p>
   tol=0.001, verbose=False)</pre>
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  SVC on training set: {round(SVC_bogo.score(X_train,y_bogo_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  SVC on test set: {round(SVC_bogo.score(X_test,y_bogo_test)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  SVC on training set: {round(SVC_discount.score(X_train,y_discount_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  SVC on test set: {round(SVC_discount.score(X_test,y_discount_test)*100,2)}%.&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bogo offer Accuracy of  SVC on training set: 88.04%.
+Bogo offer Accuracy of  SVC on test set: 59.3%.
+Discount offer Accuracy of  SVC on training set: 89.61%.
+Discount offer Accuracy of  SVC on test set: 54.6%.
+</pre>
+</div>
 </div>
 
 </div>
@@ -15250,11 +15947,11 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[197]:</div>
+<div class="prompt input_prompt">In&nbsp;[87]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RF_bogo</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span>
-<span class="n">RF_discount</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RF_bogo</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">RF_discount</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 <span class="n">RF_bogo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_bogo_train</span><span class="p">)</span>
 <span class="n">RF_discount</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_discount_train</span><span class="p">)</span>
 </pre></div>
@@ -15269,7 +15966,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[197]:</div>
+    <div class="prompt output_prompt">Out[87]:</div>
 
 
 
@@ -15278,9 +15975,9 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 <pre>RandomForestRegressor(bootstrap=True, criterion=&#39;mse&#39;, max_depth=None,
            max_features=&#39;auto&#39;, max_leaf_nodes=None,
            min_impurity_decrease=0.0, min_impurity_split=None,
-           min_samples_leaf=1, min_samples_split=2,
-           min_weight_fraction_leaf=0.0, n_estimators=100, n_jobs=1,
-           oob_score=False, random_state=42, verbose=0, warm_start=False)</pre>
+           min_samples_leaf=20, min_samples_split=2,
+           min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+           oob_score=False, random_state=None, verbose=0, warm_start=False)</pre>
 </div>
 
 </div>
@@ -15288,26 +15985,16 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li>### 5- GaussianNB  Model</li>
-</ul>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[195]:</div>
+<div class="prompt input_prompt">In&nbsp;[88]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">GNB_bogo</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span> 
-<span class="n">GNB_discount</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span> 
-<span class="n">GNB_bogo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_bogo_train</span><span class="p">)</span>
-<span class="n">GNB_discount</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_discount_train</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of   RandomForestRegressor on training set: {round(RF_bogo.score(X_train,y_bogo_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of   RandomForestRegressor on test set: {round(RF_bogo.score(X_test,y_bogo_test)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of   RandomForestRegressor on training set: {round(RF_discount.score(X_train,y_discount_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of   RandomForestRegressor on test set: {round(RF_discount.score(X_test,y_discount_test)*100,2)}%.&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -15320,15 +16007,16 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[195]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>GaussianNB(priors=None)</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bogo offer Accuracy of   RandomForestRegressor on training set: 23.44%.
+Bogo offer Accuracy of   RandomForestRegressor on test set: 12.57%.
+Discount offer Accuracy of   RandomForestRegressor on training set: 22.38%.
+Discount offer Accuracy of   RandomForestRegressor on test set: 11.26%.
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -15339,7 +16027,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li>### 6- DecisionTreeClassifier  Model</li>
+<li>### 5- DecisionTreeClassifier  Model</li>
 </ul>
 
 </div>
@@ -15347,7 +16035,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[193]:</div>
+<div class="prompt input_prompt">In&nbsp;[91]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">DT_bogo</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
@@ -15366,7 +16054,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[193]:</div>
+    <div class="prompt output_prompt">Out[91]:</div>
 
 
 
@@ -15386,6 +16074,43 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[92]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  DecisionTreeClassifier on training set: {round(DT_bogo.score(X_train,y_bogo_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Bogo offer Accuracy of  DecisionTreeClassifier on test set: {round(DT_bogo.score(X_test,y_bogo_test)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  DecisionTreeClassifier on training set: {round(DT_discount.score(X_train,y_discount_train)*100,2)}%.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Discount offer Accuracy of  DecisionTreeClassifier on test set: {round(DT_discount.score(X_test,y_discount_test)*100,2)}%.&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Bogo offer Accuracy of  DecisionTreeClassifier on training set: 99.19%.
+Bogo offer Accuracy of  DecisionTreeClassifier on test set: 58.41%.
+Discount offer Accuracy of  DecisionTreeClassifier on training set: 99.19%.
+Discount offer Accuracy of  DecisionTreeClassifier on test set: 57.14%.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -15393,13 +16118,21 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Actually, most metrics are great and I like to evaluate many metrics but from our business question and since we have a simple classification problem, <strong>Accuracy</strong> is a great metric to evaluate my models,because We want to see how well our model by seeing the number of correct predictions vs total number of predictions.and anwser the question : How many custemrs use Starbucks offers?.this is my opinion and reasoning on why to use the easiest metric (accuracy).</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[230]:</div>
+<div class="prompt input_prompt">In&nbsp;[97]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">models_bogo</span> <span class="o">=</span> <span class="p">[</span><span class="n">LR_bogo</span><span class="p">,</span> <span class="n">KNN_bogo</span><span class="p">,</span> <span class="n">SVC_bogo</span><span class="p">,</span> <span class="n">RF_bogo</span><span class="p">,</span> <span class="n">DT_bogo</span><span class="p">,</span> <span class="n">GNB_bogo</span><span class="p">]</span>
-<span class="n">models_discount</span> <span class="o">=</span> <span class="p">[</span><span class="n">LR_discount</span><span class="p">,</span> <span class="n">KNN_discount</span><span class="p">,</span> <span class="n">SVC_discount</span><span class="p">,</span> <span class="n">RF_discount</span><span class="p">,</span> <span class="n">DT_discount</span><span class="p">,</span> <span class="n">GNB_discount</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">models_bogo</span> <span class="o">=</span> <span class="p">[</span><span class="n">LR_bogo</span><span class="p">,</span> <span class="n">KNN_bogo</span><span class="p">,</span> <span class="n">SVC_bogo</span><span class="p">,</span> <span class="n">RF_bogo</span><span class="p">,</span> <span class="n">DT_bogo</span> <span class="p">]</span>
+<span class="n">models_discount</span> <span class="o">=</span> <span class="p">[</span><span class="n">LR_discount</span><span class="p">,</span> <span class="n">KNN_discount</span><span class="p">,</span> <span class="n">SVC_discount</span><span class="p">,</span> <span class="n">RF_discount</span><span class="p">,</span> <span class="n">DT_discount</span><span class="p">]</span>
 <span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">models_bogo</span><span class="p">]</span>
 <span class="n">bogo_tr_accuracy</span> <span class="o">=</span> <span class="p">[</span><span class="n">x1</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_bogo_train</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span> <span class="k">for</span> <span class="n">x1</span> <span class="ow">in</span> <span class="n">models_bogo</span><span class="p">]</span>
 <span class="n">discount_tr_accuracy</span> <span class="o">=</span> <span class="p">[</span><span class="n">x2</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_discount_train</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span> <span class="k">for</span> <span class="n">x2</span> <span class="ow">in</span> <span class="n">models_discount</span><span class="p">]</span>
@@ -15414,7 +16147,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[233]:</div>
+<div class="prompt input_prompt">In&nbsp;[98]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="n">bogo_tr_accuracy</span><span class="p">,</span> <span class="n">discount_tr_accuracy</span><span class="p">,</span><span class="n">bogo_test_accuracy</span><span class="p">,</span><span class="n">discount_test_accuracy</span><span class="p">]</span>
@@ -15432,7 +16165,7 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[233]:</div>
+    <div class="prompt output_prompt">Out[98]:</div>
 
 
 
@@ -15460,7 +16193,6 @@ If the answer is yes, the model will choose discount or BOGO .</p>
       <th>SVC</th>
       <th>RandomForestRegressor</th>
       <th>DecisionTreeClassifier</th>
-      <th>GaussianNB</th>
     </tr>
   </thead>
   <tbody>
@@ -15469,36 +16201,32 @@ If the answer is yes, the model will choose discount or BOGO .</p>
       <td>61.286550</td>
       <td>73.126406</td>
       <td>88.043185</td>
-      <td>85.062906</td>
+      <td>23.437384</td>
       <td>99.190283</td>
-      <td>64.120558</td>
     </tr>
     <tr>
       <th>Bogo Test Accuracy</th>
       <td>59.019343</td>
       <td>71.426001</td>
       <td>89.608637</td>
-      <td>84.869970</td>
+      <td>22.380955</td>
       <td>99.190283</td>
-      <td>62.096266</td>
     </tr>
     <tr>
       <th>Discount Training Accuracy</th>
       <td>61.781377</td>
       <td>57.381916</td>
       <td>59.298246</td>
-      <td>2.209663</td>
-      <td>58.218623</td>
-      <td>64.480432</td>
+      <td>12.568663</td>
+      <td>58.407557</td>
     </tr>
     <tr>
       <th>Discount Test Accuracy</th>
       <td>58.704453</td>
       <td>54.304993</td>
       <td>54.601889</td>
-      <td>0.113331</td>
-      <td>57.004049</td>
-      <td>60.728745</td>
+      <td>11.259828</td>
+      <td>57.139001</td>
     </tr>
   </tbody>
 </table>
@@ -15514,10 +16242,70 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>My analysis suggests that the resulting GaussianNB model has an bogo training data accuracy of 64 and bogo test accuracy  of 62 . discount training accuracy of 0.929 and discount test accuracy  of 60 suggests that the GaussianNB model I constructed did not overfit the training data.</p>
+<p>My analysis suggests that the resulting DecisionTreeClassifier model has an bogo training data accuracy of 99 and bogo test accuracy  of 99 . discount training accuracy of 58 and discount test accuracy  of 57 suggests that the DecisionTreeClassifier model I constructed did not overfit the training data.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Model-improvments">Model improvments<a class="anchor-link" href="#Model-improvments">&#182;</a></h2><p>After using Grid Search with DecisionTree we managed to get better results</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[105]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Tuning to get better accuracy</span>
+<span class="n">tree_para</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;criterion&#39;</span><span class="p">:[</span><span class="s1">&#39;gini&#39;</span><span class="p">,</span><span class="s1">&#39;entropy&#39;</span><span class="p">],</span>
+             <span class="s1">&#39;max_depth&#39;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">120</span><span class="p">,</span><span class="mi">150</span><span class="p">]}</span>
+
+<span class="c1"># create and fit a DecisionTree model</span>
+
+<span class="n">DT_bogo</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
+<span class="n">grid_bogo</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">DT_bogo</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">tree_para</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">grid_bogo_result</span> <span class="o">=</span> <span class="n">grid_bogo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_bogo_train</span><span class="p">)</span>
+<span class="n">DT_discount</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">()</span>
+<span class="n">grid_discount</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">DT_discount</span><span class="p">,</span> <span class="n">param_grid</span><span class="o">=</span><span class="n">tree_para</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">grid_discount_result</span> <span class="o">=</span> <span class="n">grid_discount</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_discount_train</span><span class="p">)</span>
+
+<span class="c1"># summarize the results of the random parameter search</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Best bogo model Score: </span><span class="si">{grid_bogo_result.best_score_}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Best bogo model params: </span><span class="si">{grid_bogo_result.best_params_}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Best discount model Score: </span><span class="si">{grid_discount_result.best_score_}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Best discount model params: </span><span class="si">{grid_discount_result.best_params_}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Best bogo model Score: 0.6816914080071975
+Best bogo model params: {&#39;criterion&#39;: &#39;entropy&#39;, &#39;max_depth&#39;: 7}
+Best discount model Score: 0.6525416104363473
+Best discount model params: {&#39;criterion&#39;: &#39;gini&#39;, &#39;max_depth&#39;: 4}
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -15531,10 +16319,23 @@ If the answer is yes, the model will choose discount or BOGO .</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The problem that I chose to solve was to build a model that predicts whether a customer will respond to an offer BOGO or discount. My strategy for solving this problem has mainly two steps. 
 First, I merged offer portfolio, customer profile, and transaction data. 
-Second, I built two models one for BOGO offer and an other for discount offer and i saw that the accuracy of GaussianNB model that assumes the two offers were successful.</p>
+Second, I built two models one for BOGO offer and an other for discount offer and i saw that the accuracy of DecisionTreeClassifier model that assumes the two offers were successful.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
     </div>
   </div>
