@@ -1,3 +1,10 @@
+hyperopt
+math
+json
+datetime
+time
+seaborn
+warnings
 NumPy
 Pandas
 matplotlib

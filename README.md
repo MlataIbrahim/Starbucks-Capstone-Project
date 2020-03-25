@@ -12,7 +12,7 @@
 5. [Licensing and Acknowledgements](#Licensing)
 
 ## Project Motivation <a name="ProjectMotivation"></a>
-
+This project part of my Data Science Nanodegree, 
 - Once every few days, Starbucks sends out an offer to users of the mobile app. 
 An offer can be merely an advertisement for a drink or an actual offer such as a discount or BOGO (buy one get one free).
 Some users might not receive any offer during certain weeks.Not all users receive the same offer, and that is the challenge to solve in this project.
@@ -21,8 +21,8 @@ This data set is a simplified version of the real Starbucks app because the unde
 whereas Starbucks actually sells dozens of products.
 - The problem statement I am aiming to answer are :<br/>
 **(1)** Discover customer attributes as Age , income, gender.<br/>
-  **(2)** Discover How long did the users become members ? .<br/>
-  **(3)** predict whether or not the offer will respond by the person.<br/>
+**(2)** Discover How long did the users become members ? .<br/>
+**(3)** predict whether or not the offer will respond by the person.<br/>
 Using the data provided (portfolio, profile, Transactional),I answer first and second question using charts
 and i answer the third question using 6 classification models.
 
