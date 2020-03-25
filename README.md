@@ -44,7 +44,7 @@ Actually, most metrics are great and I like to evaluate many metrics but from ou
  **Accuracy** is a great metric to evaluate my models,
  because We want to see how well our model by seeing the number of correct predictions vs total number of predictions.
  and anwser the question : How many custemrs use Starbucks offers?.this is my opinion and reasoning on why to use the easiest metric (accuracy).
-
+![Models results](/images/results.png)
 My analysis suggests that the resulting GaussianNB model has an bogo training data accuracy of 64 and bogo test accuracy of 62 .
 discount training accuracy of 0.929 and discount test accuracy of 60 suggests that the GaussianNB model I constructed did not overfit the training data.
 
